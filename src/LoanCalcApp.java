@@ -2,27 +2,40 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-//Will update later on
+import javafx.stage.StageStyle;
+
+//Updated 02/14/26
 public class LoanCalcApp extends Application{
     public void start(Stage stage){
-        //inputs
+        //inputs and input labels
+        Label rateLabel = new Label("Annual Interest Rate:");
         TextField annualInterestRate = new TextField();
-        annualInterestRate.setPromptText("Annual Interest Rate:  ");
 
+        Label yearsLabel = new Label("Number of years:");
         TextField numYears = new TextField();
-        numYears.setPromptText("Number of Years");
 
+        Label amountLabel = new Label("Amount:");
         TextField loanAmount = new TextField();
-        loanAmount.setPromptText("Loan Amount ");
+
 
         //Compute button
         Button multiplyButton = new Button("Compute");
 
         //Result labels
-        Label resultLabel1 = new Label();
-        Label resultLabel2 = new Label();
+        Label resultLabel2 = new Label("Monthly Payments:");
+        Label resultMonthly = new Label();
+        Label resultLabel1 = new Label("Total Payment:");
+        Label totalResult = new Label();
+        Label errorLabel = new Label("");
+
+        //result label textfields
+        TextField result1Field = new TextField();
+        result1Field.setEditable(false);
+        TextField result2Field = new TextField();
+        result2Field.setEditable(false);
 
         //Exception handling(invalid input eg(letters, symbols))
         multiplyButton.setOnAction(e -> {
@@ -40,22 +53,46 @@ public class LoanCalcApp extends Application{
                double totalPayment = n * monthlyPayment;
 
                //Formatting to 2 decimals
-               resultLabel2.setText((String.format("Monthly Payments: $%.2f", monthlyPayment)));
-               resultLabel1.setText((String.format("Total Payment: $%.2f", totalPayment)));
+               result1Field.setText(String.format("$%.2f", monthlyPayment));
+               result2Field.setText(String.format("$%.2f", totalPayment));
+
+
            } catch (NumberFormatException ex) {
                //invalid input result
-               resultLabel1.setText("Please enter valid numbers");
+               errorLabel.setText("Please enter valid numbers");
            }
         });
+        //GridPane to add prompt text outside of textfield
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+
+        grid.add(rateLabel, 0, 0);
+        grid.add(annualInterestRate, 1, 0);
+        grid.add(yearsLabel, 0, 1);
+        grid.add(numYears, 1, 1);
+        grid.add(amountLabel, 0, 2);
+        grid.add(loanAmount, 1, 2);
+        grid.add(resultLabel2, 0, 3);
+        grid.add(result1Field, 1, 3);
+        grid.add(resultLabel1, 0, 4);
+        grid.add(result2Field, 1, 4);
+        grid.add(errorLabel, 0, 6);
+
+
+
 
         //Layout and scene
-        VBox layout = new VBox(10, annualInterestRate, numYears, loanAmount, multiplyButton, resultLabel2, resultLabel1);
+        VBox layout = new VBox(10);
         layout.setPadding(new Insets(20));
+        layout.getChildren().addAll(grid, multiplyButton);
 
-        Scene scene = new Scene(layout, 300, 300);
+        Scene scene = new Scene(layout, 350, 270);
+        scene.getStylesheets().add("style.css");
         stage.setTitle("LoanCalculator");
         stage.setScene(scene);
         stage.show();
+
     }
     public static void main(String[] args){
         launch();
